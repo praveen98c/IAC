@@ -1,0 +1,18 @@
+apiVersion: v1
+
+kind: Service
+metadata:
+  name: hello-backend-service
+
+spec:
+  # Send traffic to the backend pods
+  selector:
+    app: hello-backend
+
+  # Service listens on port 80, forwards to container on port 80
+  ports:
+    - port: 80
+      targetPort: 80
+
+  # Only accessible inside the cluster
+  type: ClusterIP
