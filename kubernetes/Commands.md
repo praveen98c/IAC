@@ -10,6 +10,11 @@ kubectl get namespaces
 # List pods in a namespace
 kubectl get pods -n <namespace>
 
+# List services
+kubectl get services
+kubectl get svc
+kubectl get service
+
 # Show detailed information about a pod
 kubectl describe pod <pod-name> -n <namespace>
 
