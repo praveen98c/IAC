@@ -1,0 +1,46 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: test-vm
+  labels:
+    app: test-vm
+spec:
+  runStrategy: Always
+  template:
+    metadata:
+      labels:
+        app: test-vm
+        kubevirt.io/domain: test-vm
+    spec:
+      terminationGracePeriodSeconds: 0
+      domain:
+        resources:
+          requests:
+            memory: 128Mi
+        devices:
+          disks:
+            - name: containerdisk
+              disk:
+                bus: virtio
+            - name: cloudinitdisk
+              disk:
+                bus: virtio
+          interfaces:
+            - name: default
+              masquerade: {}
+      networks:
+        - name: default
+          pod: {}
+      volumes:
+        - name: containerdisk
+          containerDisk:
+            image: quay.io/kubevirt/cirros-container-disk-demo:latest
+        - name: cloudinitdisk
+          cloudInitNoCloud:
+            userData: |-
+              #cloud-config
+              user: cirros
+              password: kubevirt
+              chpasswd:
+                expire: false
+              ssh_pwauth: true

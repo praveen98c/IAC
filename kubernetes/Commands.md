@@ -44,4 +44,16 @@ kubectl run test-shell --rm -it --image=ubuntu -- bash
 
 curl http://<service-name>
 
+# Open the virtual machine serial console
+virtctl console test-vm
+
+# Show the virtual machine and its running instance
+kubectl get virtualmachine,virtualmachineinstance
+
+kubectl describe vm <vm-name>
+kubectl describe vmi <vm-name>
+
+# To see the IP address of the vm
+kubectl get vmi <vm-name> -o wide
+
 
