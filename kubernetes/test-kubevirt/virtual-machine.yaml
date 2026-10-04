@@ -1,22 +1,22 @@
 apiVersion: kubevirt.io/v1
 kind: VirtualMachine
 metadata:
-  name: test-vm
+  name: ubuntu-vm
   labels:
-    app: test-vm
+    app: ubuntu-vm
 spec:
   runStrategy: Always
   template:
     metadata:
       labels:
-        app: test-vm
-        kubevirt.io/domain: test-vm
+        app: ubuntu-vm
+        kubevirt.io/domain: ubuntu-vm
     spec:
-      terminationGracePeriodSeconds: 0
+      terminationGracePeriodSeconds: 30
       domain:
         resources:
           requests:
-            memory: 128Mi
+            memory: 1Gi
         devices:
           disks:
             - name: containerdisk
@@ -34,13 +34,36 @@ spec:
       volumes:
         - name: containerdisk
           containerDisk:
-            image: quay.io/kubevirt/cirros-container-disk-demo:latest
+            image: quay.io/containerdisks/ubuntu:24.04
         - name: cloudinitdisk
           cloudInitNoCloud:
             userData: |-
               #cloud-config
-              user: cirros
-              password: kubevirt
+              users:
+                # Keep the default user provided by the Ubuntu cloud image.
+                - default
+                # Create an additional user named "ubuntu".
+                - name: praveen
+                  # Add the user to the administrative and sudo groups.
+                  groups: [adm, sudo]
+                  # Use Bash as the user's login shell.
+                  shell: /bin/bash
+                  # Password login allowed
+                  lock_passwd: false
               chpasswd:
+                users:
+                  - name: praveen
+                    password: "12345678"
+                    type: text
                 expire: false
               ssh_pwauth: true
+              packages:
+                - openssh-server
+              write_files:
+                - path: /etc/ssh/sshd_config.d/60-cloud-init-password-auth.conf
+                  permissions: "0644"
+                  content: |
+                    PasswordAuthentication yes
+              runcmd:
+                - systemctl enable ssh
+                - systemctl restart ssh
