@@ -10,6 +10,9 @@ kubectl kustomize .
 # delete the kustomized configuration 
 kubectl delete -k .
 
+# Check Kubernetes resources
+kubectl get all
+
 # Show cluster information
 kubectl cluster-info
 
