@@ -1,0 +1,13 @@
+- op: add
+  path: /spec/template/spec/domain/devices/disks/-
+  value:
+    name: data-disk
+    disk:
+      bus: virtio
+
+- op: add
+  path: /spec/template/spec/volumes/-
+  value:
+    name: data-disk
+    persistentVolumeClaim:
+      claimName: ubuntu-data-pvc

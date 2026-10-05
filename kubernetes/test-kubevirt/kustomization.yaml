@@ -1,0 +1,11 @@
+resources:
+  - ubuntu-vm.yaml
+  - pvc.yaml
+
+patches:
+  - target:
+      group: kubevirt.io
+      version: v1
+      kind: VirtualMachine
+      name: ubuntu-vm
+    path: storage-patch.yaml

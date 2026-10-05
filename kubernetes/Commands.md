@@ -1,6 +1,15 @@
 # Start minikube with more memory
 minikube start --memory=8192
 
+# applies the kustomized yaml
+kubectl apply -k .
+
+# prints the final yaml
+kubectl kustomize .
+
+# delete the kustomized configuration 
+kubectl delete -k .
+
 # Show cluster information
 kubectl cluster-info
 
