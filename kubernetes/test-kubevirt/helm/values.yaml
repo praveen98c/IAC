@@ -1,0 +1,31 @@
+vm:
+  runStrategy: Always
+  terminationGracePeriodSeconds: 30
+  image: quay.io/containerdisks/ubuntu:24.04
+  memory: 1Gi
+
+cloudInit:
+  username: praveen
+  password: "12345678"
+  sshPasswordAuthentication: true
+  packages:
+    - openssh-server
+
+storage:
+  enabled: false
+
+  # Leave empty to create a PVC, or provide the name of an existing PVC.
+  existingClaim: ""
+  size: 10Mi
+  storageClassName: ""
+  accessModes:
+    - ReadWriteOnce
+
+  bus: virtio
+  # The serial provides a stable guest path at /dev/disk/by-id/virtio-<serial>.
+  # Keep it alphanumeric or use hyphens/underscores, with at most 20 characters.
+  serial: data-disk
+  filesystem: ext4
+  filesystemLabel: data
+  mountPath: /mnt/data
+  mountOptions: defaults,nofail

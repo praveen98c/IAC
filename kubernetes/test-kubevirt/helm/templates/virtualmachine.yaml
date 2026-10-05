@@ -1,0 +1,84 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  runStrategy: {{ .Values.vm.runStrategy }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+        kubevirt.io/domain: {{ .Release.Name }}
+    spec:
+      terminationGracePeriodSeconds: {{ .Values.vm.terminationGracePeriodSeconds }}
+      domain:
+        resources:
+          requests:
+            memory: {{ .Values.vm.memory }}
+        devices:
+          disks:
+            - name: containerdisk
+              disk:
+                bus: virtio
+            - name: cloudinitdisk
+              disk:
+                bus: virtio
+            {{- if .Values.storage.enabled }}
+            - name: data-disk
+              serial: {{ .Values.storage.serial | quote }}
+              disk:
+                bus: {{ .Values.storage.bus }}
+            {{- end }}
+          interfaces:
+            - name: default
+              masquerade: {}
+      networks:
+        - name: default
+          pod: {}
+      volumes:
+        - name: containerdisk
+          containerDisk:
+            image: {{ .Values.vm.image }}
+        - name: cloudinitdisk
+          cloudInitNoCloud:
+            userData: |-
+              #cloud-config
+              users:
+                - default
+                - name: {{ .Values.cloudInit.username }}
+                  groups: [adm, sudo]
+                  shell: /bin/bash
+                  lock_passwd: false
+              chpasswd:
+                users:
+                  - name: {{ .Values.cloudInit.username }}
+                    password: {{ .Values.cloudInit.password | quote }}
+                    type: text
+                expire: false
+              ssh_pwauth: {{ .Values.cloudInit.sshPasswordAuthentication }}
+              packages:
+                {{- toYaml .Values.cloudInit.packages | nindent 16 }}
+              write_files:
+                - path: /etc/ssh/sshd_config.d/60-cloud-init-password-auth.conf
+                  permissions: "0644"
+                  content: |
+                    PasswordAuthentication {{ ternary "yes" "no" .Values.cloudInit.sshPasswordAuthentication }}
+              {{- if .Values.storage.enabled }}
+              fs_setup:
+                - label: {{ .Values.storage.filesystemLabel | quote }}
+                  filesystem: {{ .Values.storage.filesystem | quote }}
+                  device: {{ printf "/dev/disk/by-id/virtio-%s" .Values.storage.serial | quote }}
+                  overwrite: false
+              mounts:
+                - [{{ printf "/dev/disk/by-id/virtio-%s" .Values.storage.serial | quote }}, {{ .Values.storage.mountPath | quote }}, auto, {{ .Values.storage.mountOptions | quote }}, "0", "2"]
+              {{- end }}
+              runcmd:
+                - systemctl enable ssh
+                - systemctl restart ssh
+        {{- if .Values.storage.enabled }}
+        - name: data-disk
+          persistentVolumeClaim:
+            claimName: {{ default (printf "%s-data" .Release.Name) .Values.storage.existingClaim }}
+        {{- end }}

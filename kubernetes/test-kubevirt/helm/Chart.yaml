@@ -1,0 +1,6 @@
+apiVersion: v2
+name: ubuntu-vm
+description: A KubeVirt Ubuntu virtual machine with optional persistent storage
+type: application
+version: 0.1.0
+appVersion: "24.04"
