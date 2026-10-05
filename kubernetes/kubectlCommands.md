@@ -54,9 +54,6 @@ kubectl port-forward service/<service-name> 8080:80
 # Delete resources defined in a manifest
 kubectl delete -f <manifest.yaml>
 
-# Open the virtual machine serial console
-virtctl console test-vm
-
 # Show the virtual machine and its running instance
 kubectl get virtualmachine,virtualmachineinstance
 
