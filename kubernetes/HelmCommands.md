@@ -1,4 +1,4 @@
-# to render the yaml
+# to render the yaml without installing
 helm template <release name> <chart-path>
 helm template <release-name> <chart-path> -n <namespace>
 
@@ -25,3 +25,17 @@ helm status <release-name>
 # See the actual generated YAML
 helm get manifest <release-name>
 
+# Roll back to revision 2
+helm rollback <release-name> 2
+
+# Show values used by a release
+helm get values <release-name>
+
+# Show all values, including defaults
+helm get values  <release-name> --all
+
+# Show chart metadata
+helm show chart <chart-path>
+
+# Check a Helm chart for common problems
+helm lint <chart-path>
