@@ -55,7 +55,7 @@ spec:
                 users:
                   - name: {{ .Values.cloudInit.username }}
                     password: {{ .Values.cloudInit.password | quote }}
-                    type: text
+                    type: hash
                 expire: false
               ssh_pwauth: {{ .Values.cloudInit.sshPasswordAuthentication }}
               packages:

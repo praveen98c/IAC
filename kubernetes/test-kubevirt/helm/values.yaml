@@ -6,7 +6,8 @@ vm:
 
 cloudInit:
   username: praveen
-  password: "12345678"
+  # Password is 12345678
+  password: '$6$Jp7aQ3vNz2Lm8KxR$TKeVMiqnpKQM8T/n5XdMYlVeu1vYnIpyNEFjtKj8Qk7XxLlew2IyeXcKufgfddklDHxGrk5QEFL3O6JKxxTX3.'
   sshPasswordAuthentication: true
   packages:
     - openssh-server
