@@ -84,6 +84,3 @@ Can't connect to websocket: dial tcp 127.0.0.1:8080: connect: connection refused
 run the following command to write the microk8s kubernetis connection strings into the default kubeconfig location
 microk8s config > ~/.kube/config
 
-# gives the cloud init state inside a vm
-cloud-init status --long
-
